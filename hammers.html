@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Hammers — Informasi Gizi Burger per Lapisan</title>
+
+    <!-- optional: situs CSS (hapus jika tidak ada) -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
+
+    <style>
+      :root {
+        --bg: #f6fbf4;
+        --card: #fff;
+        --muted: #6b7280;
+        --accent: #2db86e;
+        --accent-2: #2b8cd6;
+        --accent-3: #f39c12;
+        --text: #0b2540;
+        --surface: #f9fff7;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, system-ui, Roboto, Arial;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      button {
+        font-family: inherit;
+      }
+
+      /* header */
+      header.site-header {
+        background: #fff;
+        border-bottom: 1px solid rgba(11, 37, 64, 0.05);
+        position: sticky;
+        top: 0;
+        z-index: 1200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 16px;
+        box-shadow: 0 6px 14px rgba(11, 37, 64, 0.02);
+      }
+      .site-title {
+        font-weight: 800;
+        font-size: 18px;
+      }
+
+      /* layout */
+      main.container {
+        max-width: 1100px;
+        margin: 22px auto 60px;
+        padding: 0 16px;
+      }
+      .hero-title {
+        text-align: center;
+        font-size: 26px;
+        font-weight: 800;
+        margin: 0 0 8px;
+      }
+      .hero-desc {
+        text-align: center;
+        color: var(--muted);
+        max-width: 820px;
+        margin: 0 auto 18px;
+        line-height: 1.45;
+      }
+
+      .hammers-wrap {
+        display: flex;
+        gap: 28px;
+        align-items: flex-start;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      /* visual */
+      .visual-col {
+        flex: 0 1 420px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 260px;
+      }
+      .burger-stage {
+        position: relative;
+        width: 100%;
+        max-width: 420px;
+        height: 460px;
+        margin: 0 auto;
+        perspective: 1200px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 8px;
+        box-sizing: border-box;
+      }
+      .burger-stack {
+        position: relative;
+        width: 78%;
+        max-width: 340px;
+        height: 100%;
+        display: flex;
+        align-items: flex-end;
+        margin: 0 auto;
+        box-sizing: border-box;
+      }
+
+      .burger-layer {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.28s ease, filter 0.28s ease;
+        cursor: pointer;
+        border-radius: 8px;
+      }
+      .layer-top {
+        bottom: 186px;
+        z-index: 50;
+        animation: floatY 4.4s ease-in-out infinite;
+      }
+      .layer-tomatoes {
+        bottom: 140px;
+        z-index: 40;
+        animation: floatY 4.8s ease-in-out infinite;
+      }
+      .layer-lettuce {
+        bottom: 106px;
+        z-index: 30;
+        animation: floatY 5.2s ease-in-out infinite;
+      }
+      .layer-beef {
+        bottom: 66px;
+        z-index: 20;
+        animation: floatY 5.6s ease-in-out infinite;
+      }
+      .layer-bottom {
+        bottom: 0;
+        z-index: 10;
+        animation: floatY 6s ease-in-out infinite;
+      }
+
+      .layer-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        pointer-events: none;
+        -webkit-user-drag: none;
+        user-drag: none;
+      }
+
+      @keyframes floatY {
+        0% {
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          transform: translateX(-50%) translateY(-6px);
+        }
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+      }
+      .burger-layer:hover,
+      .burger-layer:active {
+        transform: translateX(-50%) translateY(-8px) scale(1.02);
+        filter: drop-shadow(0 12px 24px rgba(3, 18, 22, 0.06));
+        z-index: 999;
+      }
+      .burger-layer.selected {
+        outline: 3px solid rgba(45, 184, 110, 0.12);
+        background: var(--surface);
+      }
+
+      /* info column */
+      .info-col {
+        flex: 1 1 480px;
+        min-width: 260px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 10px 28px rgba(11, 37, 64, 0.04);
+      }
+      .section-title {
+        font-weight: 800;
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+      .divider {
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          rgba(11, 37, 64, 0.03),
+          rgba(11, 37, 64, 0.02)
+        );
+        margin: 10px 0;
+        border-radius: 2;
+      }
+
+      .nutri-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      .nutri-table th,
+      .nutri-table td {
+        text-align: left;
+        padding: 10px 8px;
+        border-bottom: 1px dashed #eef4ea;
+      }
+      .nutri-table th {
+        font-weight: 700;
+        color: #274055;
+      }
+      #nutri-foot td {
+        border-top: 1px solid rgba(11, 37, 64, 0.06);
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+      .btn {
+        background: var(--accent);
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .btn.ghost {
+        background: transparent;
+        color: var(--text);
+        border: 1px solid rgba(11, 37, 64, 0.06);
+      }
+
+      /* details panel */
+      .details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.32s ease;
+      }
+      .details.open {
+        max-height: 800px;
+      }
+
+      /* activity colored cards */
+      .activity-grid {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .activity-card {
+        flex: 1 1 150px;
+        min-width: 150px;
+        border-radius: 10px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 8px 20px rgba(11, 37, 64, 0.03);
+        color: white;
+      }
+      .activity-card.green {
+        background: linear-gradient(180deg, var(--accent), #1aa95e);
+      }
+      .activity-card.blue {
+        background: linear-gradient(180deg, var(--accent-2), #1b6ecb);
+      }
+      .activity-card.orange {
+        background: linear-gradient(180deg, var(--accent-3), #e67e22);
+      }
+      .activity-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.18);
+      }
+      .activity-title {
+        font-weight: 800;
+        font-size: 14px;
+      }
+      .activity-desc {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.95);
+        text-align: center;
+      }
+
+      .small-muted {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      /* infographics/procedure steps (recycling / storage / disposal) */
+      .proc {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 10px;
+      }
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        background: linear-gradient(90deg, #fff, #fbfff9);
+        box-shadow: 0 8px 20px rgba(11, 37, 64, 0.03);
+      }
+      .step .icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 10px;
+        background: rgba(11, 37, 64, 0.04);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .step .meta {
+        flex: 1;
+      }
+      .step .meta .title {
+        font-weight: 800;
+      }
+      .step .meta .desc {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+      .progress-bar {
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(11, 37, 64, 0.06);
+        overflow: hidden;
+        margin-top: 8px;
+      }
+      .progress-bar > span {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+      }
+
+      .step.green .progress-bar > span {
+        background: linear-gradient(90deg, var(--accent), #1aa95e);
+        width: 100%;
+      }
+      .step.blue .progress-bar > span {
+        background: linear-gradient(90deg, var(--accent-2), #1b6ecb);
+        width: 100%;
+      }
+      .step.orange .progress-bar > span {
+        background: linear-gradient(90deg, var(--accent-3), #e67e22);
+        width: 100%;
+      }
+
+      /* ---------- BANNER (4:1) ---------- */
+      .banner-4x1 {
+        width: 100%;
+        max-width: 980px;
+        margin: 12px auto 18px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 22px rgba(11, 37, 64, 0.06);
+      }
+      .banner-4x1 .banner-media {
+        width: 100%;
+        aspect-ratio: 4 / 1;
+        display: block;
+        background: #e9f5ee;
+        position: relative;
+      }
+      .banner-4x1 .banner-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .banner-4x1 .banner-overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        color: white;
+        text-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+      }
+      .banner-4x1 .banner-overlay .text {
+        font-weight: 800;
+        font-size: 18px;
+        padding: 8px 14px;
+        background: rgba(0, 0, 0, 0.22);
+        border-radius: 999px;
+      }
+      /* responsive tweaks */
+      @media (max-width: 520px) {
+        .banner-4x1 {
+          max-width: 92%;
+          margin: 10px auto;
+        }
+        .banner-4x1 .banner-overlay .text {
+          font-size: 15px;
+          padding: 6px 10px;
+        }
+      }
+
+      /* footer */
+      footer.site-footer {
+        background: #fff;
+        padding: 18px 16px;
+        border-top: 1px solid rgba(11, 37, 64, 0.04);
+        text-align: center;
+        color: var(--muted);
+      }
+      footer .copy {
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      /* mobile stacked layers */
+      @media (max-width: 980px) {
+        .hammers-wrap {
+          flex-direction: column;
+          align-items: center;
+        }
+        .visual-col {
+          order: 1;
+          width: 100%;
+        }
+        .info-col {
+          order: 2;
+          width: 100%;
+        }
+        .burger-stage {
+          height: auto;
+          padding-top: 12px;
+          padding-bottom: 8px;
+        }
+        .burger-stack {
+          height: auto;
+          width: 92%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          padding-bottom: 6px;
+        }
+        .burger-layer {
+          position: relative;
+          left: auto;
+          transform: none;
+          width: 86%;
+          margin: 0 auto;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .layer-top,
+        .layer-tomatoes,
+        .layer-lettuce,
+        .layer-beef,
+        .layer-bottom {
+          bottom: auto;
+          animation: none;
+        }
+      }
+      @media (max-width: 520px) {
+        .burger-stack {
+          width: 92%;
+          max-width: 280px;
+        }
+        .activity-card {
+          min-width: 120px;
+        }
+        .hero-title {
+          font-size: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="site-title">Hammers</div>
+    </header>
+
+    <main class="container" role="main" aria-labelledby="pageTitle">
+      <h1 id="pageTitle" class="hero-title">
+        Hammers — Informasi gizi burger per lapisan
+      </h1>
+      <p class="hero-desc">
+        Halaman ini menampilkan susunan lapisan burger, rincian gizi per
+        lapisan, perkiraan waktu olahraga yang dibutuhkan untuk membakar kalori,
+        serta prosedur daur ulang dan penanganan sisa makanan. Klik lapisan
+        burger untuk melihat gizi lapisan tersebut. Gunakan tombol "More
+        details" untuk membuka tabel lengkap per-layer.
+      </p>
+
+      <div
+        class="hammers-wrap"
+        role="region"
+        aria-label="Burger visual dan informasi"
+      >
+        <!-- VISUAL -->
+        <div class="visual-col" aria-hidden="false">
+          <div class="burger-stage" aria-label="Ilustrasi lapisan burger">
+            <div
+              class="burger-stack"
+              role="img"
+              aria-label="Lapisan burger: Top bun, Tomatoes, Lettuce, Beef, Bottom bun"
+            >
+              <div
+                class="burger-layer layer-top"
+                data-id="top-bun"
+                tabindex="0"
+                data-name="Top bun"
+              >
+                <img
+                  class="layer-img"
+                  src="./assets/img/hamburger/top.png"
+                  alt="Top bun"
+                />
+              </div>
+
+              <div
+                class="burger-layer layer-tomatoes"
+                data-id="tomatoes"
+                tabindex="0"
+                data-name="Tomatoes"
+              >
+                <img
+                  class="layer-img"
+                  src="./assets/img/hamburger/tomatoes.png"
+                  alt="Tomatoes"
+                />
+              </div>
+
+              <div
+                class="burger-layer layer-lettuce"
+                data-id="lettuce"
+                tabindex="0"
+                data-name="Lettuce"
+              >
+                <img
+                  class="layer-img"
+                  src="./assets/img/hamburger/lettuce.png"
+                  alt="Lettuce"
+                />
+              </div>
+
+              <div
+                class="burger-layer layer-beef"
+                data-id="beef"
+                tabindex="0"
+                data-name="Beef (patty)"
+              >
+                <img
+                  class="layer-img"
+                  src="./assets/img/hamburger/patty.png"
+                  alt="Beef patty"
+                />
+              </div>
+
+              <div
+                class="burger-layer layer-bottom"
+                data-id="bottom-bun"
+                tabindex="0"
+                data-name="Bottom bun"
+              >
+                <img
+                  class="layer-img"
+                  src="./assets/img/hamburger/bottom.png"
+                  alt="Bottom bun"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INFO -->
+        <div class="info-col">
+          <!-- Gizi -->
+          <section class="card" aria-labelledby="sec-gizi">
+            <div id="sec-gizi" class="section-title">
+              Gizi per lapisan dan total
+            </div>
+            <div class="small-muted">
+              Klik lapisan burger untuk menampilkan rincian gizi lapisan
+              tersebut. Tombol "More details" membuka tabel lengkap yang
+              menunjukkan nilai gizi semua lapisan sekaligus.
+            </div>
+            <div class="divider"></div>
+
+            <div
+              class="controls"
+              style="justify-content: space-between; align-items: center"
+            >
+              <div style="display: flex; gap: 8px; align-items: center">
+                <button
+                  id="moreDetailsBtn"
+                  class="btn ghost"
+                  aria-expanded="false"
+                >
+                  More details
+                </button>
+              </div>
+              <div
+                style="text-align: right; color: var(--muted); font-weight: 700"
+              >
+                Total energi: <span id="total-calories">--</span>
+              </div>
+            </div>
+
+            <table
+              class="nutri-table"
+              aria-describedby="note-gizi"
+              style="margin-top: 12px"
+            >
+              <thead>
+                <tr>
+                  <th>Nutrient</th>
+                  <th style="text-align: right">Jumlah</th>
+                </tr>
+              </thead>
+              <tbody id="nutri-body"></tbody>
+              <tfoot id="nutri-foot"></tfoot>
+            </table>
+
+            <div id="note-gizi" class="small-muted">
+              Tabel utama menampilkan total. Untuk melihat per-layer, klik
+              lapisan burger di sebelah atau buka "More details".
+            </div>
+
+            <!-- details (collapsed) -->
+            <div
+              id="detailsPanel"
+              class="details"
+              aria-hidden="true"
+              style="margin-top: 12px"
+            >
+              <div class="divider"></div>
+              <div style="font-weight: 800; margin-bottom: 8px">
+                Rincian per lapisan
+              </div>
+              <table class="nutri-table" id="perlayer-table">
+                <thead>
+                  <tr>
+                    <th>Lapisan</th>
+                    <th style="text-align: right">Kalori</th>
+                    <th style="text-align: right">Lemak (g)</th>
+                    <th style="text-align: right">Karbohidrat (g)</th>
+                    <th style="text-align: right">Protein (g)</th>
+                  </tr>
+                </thead>
+                <tbody id="perlayer-body"></tbody>
+                <tfoot id="perlayer-foot"></tfoot>
+              </table>
+            </div>
+          </section>
+
+          <!-- Exercise -->
+          <section class="card" aria-labelledby="sec-olahraga">
+            <div id="sec-olahraga" class="section-title">
+              Perkiraan olahraga untuk membakar kalori
+            </div>
+            <div class="small-muted">
+              Perkiraan dihitung berdasarkan berat rata-rata 70 kilogram. Ini
+              hanya panduan.
+            </div>
+            <div class="divider"></div>
+
+            <div class="activity-grid" id="activityGrid"></div>
+          </section>
+
+          <!-- Recycling / Storage / Disposal procedural infographic -->
+          <section class="card" aria-labelledby="sec-daur">
+            <div id="sec-daur" class="section-title">
+              Daur ulang, penyimpanan, dan pembuangan sisa makanan
+            </div>
+            <div class="small-muted">
+              Panduan singkat langkah per langkah. Ganti kotak ikon dengan SVG
+              milikmu jika diinginkan.
+            </div>
+            <div class="divider"></div>
+
+            <!-- ====== BANNER 4:1 (inserted here, before A/B/C) ====== -->
+            <div class="banner-4x1" role="img">
+              <div class="banner-media">
+                <!--
+                  Ganti src berikut dengan banner milikmu. Banner harus berasio 4:1.
+                  Contoh ukuran: 1200x300 px.
+                -->
+                <img
+                  src="./assets/img/banner-recycle.png"
+                  alt="Banner Daur ulang"
+                />
+                <!-- Optional overlay text (hapus jika tidak perlu) -->
+                <div class="banner-overlay" aria-hidden="true"></div>
+              </div>
+            </div>
+            <!-- ====== end banner ====== -->
+
+            <!-- SECTION A: Daur ulang (prosedur) -->
+            <div style="margin-top: 6px">
+              <div style="font-weight: 800; margin-bottom: 8px">
+                A. Daur ulang kemasan
+              </div>
+              <div class="proc">
+                <div class="step green">
+                  <div class="icon" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M16 3h5v5" />
+                      <path d="M8 3H3v5" />
+                      <path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3" />
+                      <path d="m15 9 6-6" />
+                    </svg>
+                  </div>
+                  <div class="meta">
+                    <div class="title">Pisahkan bahan</div>
+                    <div class="desc">
+                      Buka kemasan, pisahkan kertas/karton dari plastik. Kertas
+                      yang bersih dapat didaur ulang.
+                    </div>
+                    <div class="progress-bar"><span></span></div>
+                  </div>
+                </div>
+
+                <div class="step blue">
+                  <div class="icon" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="m16 22-1-4" />
+                      <path
+                        d="M19 13.99a1 1 0 0 0 1-1V12a2 2 0 0 0-2-2h-3a1 1 0 0 1-1-1V4a2 2 0 0 0-4 0v5a1 1 0 0 1-1 1H6a2 2 0 0 0-2 2v.99a1 1 0 0 0 1 1"
+                      />
+                      <path
+                        d="M5 14h14l1.973 6.767A1 1 0 0 1 20 22H4a1 1 0 0 1-.973-1.233z"
+                      />
+                      <path d="m8 22 1-4" />
+                    </svg>
+                  </div>
+                  <div class="meta">
+                    <div class="title">Bersihkan bila perlu</div>
+                    <div class="desc">
+                      Singkirkan minyak dan sisa makanan dari kemasan agar
+                      fasilitas daur ulang dapat menerima material tersebut.
+                    </div>
+                    <div class="progress-bar"><span></span></div>
+                  </div>
+                </div>
+
+                <div class="step orange">
+                  <div class="icon" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M10 11v6" />
+                      <path d="M14 11v6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                      <path d="M3 6h18" />
+                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </div>
+                  <div class="meta">
+                    <div class="title">Buang ke tempat sesuai</div>
+                    <div class="desc">
+                      Masukkan material ke tempat sampah terpisah sesuai
+                      jenisnya. Jika fasilitas lokal tidak menerima, buang ke
+                      residu.
+                    </div>
+                    <div class="progress-bar"><span></span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- ====== BANNER 4:1 (inserted here, before A/B/C) ====== -->
+            <div class="banner-4x1" role="img">
+              <div class="banner-media">
+                <!--
+                  Ganti src berikut dengan banner milikmu. Banner harus berasio 4:1.
+                  Contoh ukuran: 1200x300 px.
+                -->
+                <img src="./assets/img/abnner.png" alt="Banner Daur ulang" />
+                <!-- Optional overlay text (hapus jika tidak perlu) -->
+                <div class="banner-overlay" aria-hidden="true"></div>
+              </div>
+            </div>
+            <!-- ====== end banner ====== -->
+            <!-- SECTION B: Penyimpanan jika makanan tidak habis -->
+            <div style="margin-top: 14px">
+              <div style="font-weight: 800; margin-bottom: 8px">
+                B. Cara menyimpan sisa makanan
+              </div>
+              <div class="proc">
+                <div class="step green">
+                  <div class="icon" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="m10 20-1.25-2.5L6 18" />
+                      <path d="M10 4 8.75 6.5 6 6" />
+                      <path d="M10.585 15H10" />
+                      <path d="M2 12h6.5L10 9" />
+                      <path d="M20 14.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z" />
+                    </svg>
+                  </div>
+                  <div class="meta">
+                    <div class="title">Segera dinginkan</div>
+                    <div class="desc">
+                      Simpan sisa makanan dalam wadah kedap udara dan masukkan
+                      ke lemari es dalam dua jam setelah disajikan.
+                    </div>
+                    <div class="progress-bar"><span></span></div>
+                  </div>
+                </div>
+
+                <div class="step blue">
+                  <div class="icon" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M8 2v4" />
+                      <path d="M16 2v4" />
+                      <rect width="18" height="18" x="3" y="4" rx="2" />
+                      <path d="M3 10h18" />
+                      <path d="M8 14h.01" />
+                      <path d="M12 14h.01" />
+                      <path d="M16 14h.01" />
+                      <path d="M8 18h.01" />
+                      <path d="M12 18h.01" />
+                      <path d="M16 18h.01" />
+                    </svg>
+                  </div>
+                  <div class="meta">
+                    <div class="title">Gunakan dalam 48 jam</div>
+                    <div class="desc">
+                      Konsumsi sisa makanan dalam 48 jam untuk kualitas terbaik.
+                      Untuk penyimpanan lebih lama, bekukan.
+                    </div>
+                    <div class="progress-bar"><span></span></div>
+                  </div>
+                </div>
+
+                <div class="step orange">
+                  <div class="icon" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"
+                      />
+                      <circle cx="7.5" cy="7.5" r=".5" fill="currentColor" />
+                    </svg>
+                  </div>
+                  <div class="meta">
+                    <div class="title">Label dan tanggal</div>
+                    <div class="desc">
+                      Beri label dan tanggal pada wadah sebelum dimasukkan ke
+                      freezer agar mudah diidentifikasi.
+                    </div>
+                    <div class="progress-bar"><span></span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- ====== BANNER 4:1 (inserted here, before A/B/C) ====== -->
+            <div class="banner-4x1" role="img">
+              <div class="banner-media">
+                <!--
+                  Ganti src berikut dengan banner milikmu. Banner harus berasio 4:1.
+                  Contoh ukuran: 1200x300 px.
+                -->
+                <img
+                  src="./assets/img/banner-tidak.png"
+                  alt="Banner Daur ulang"
+                />
+                <!-- Optional overlay text (hapus jika tidak perlu) -->
+                <div class="banner-overlay" aria-hidden="true"></div>
+              </div>
+            </div>
+            <!-- ====== end banner ====== -->
+            <!-- SECTION C: Cara membuang makanan jika tidak habis -->
+            <div style="margin-top: 14px">
+              <div style="font-weight: 800; margin-bottom: 8px">
+                C. Jika makanan tidak habis dan tidak bisa disimpan
+              </div>
+              <div class="proc">
+                <div class="step green">
+                  <div class="icon" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M12 16H4a2 2 0 1 1 0-4h16a2 2 0 1 1 0 4h-4.25" />
+                      <path
+                        d="M5 12a2 2 0 0 1-2-2 9 7 0 0 1 18 0 2 2 0 0 1-2 2"
+                      />
+                      <path
+                        d="M5 16a2 2 0 0 0-2 2 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 2 2 0 0 0-2-2q0 0 0 0"
+                      />
+                      <path d="m6.67 12 6.13 4.6a2 2 0 0 0 2.8-.4l3.15-4.2" />
+                    </svg>
+                  </div>
+                  <div class="meta">
+                    <div class="title">Pertimbangkan donasi</div>
+                    <div class="desc">
+                      Jika makanan aman dan baru disajikan, pertimbangkan
+                      memberi ke tetangga atau bank makanan lokal.
+                    </div>
+                    <div class="progress-bar"><span></span></div>
+                  </div>
+                </div>
+
+                <div class="step blue">
+                  <div class="icon" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"
+                      />
+                      <path
+                        d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"
+                      />
+                      <path d="m14 16-3 3 3 3" />
+                      <path d="M8.293 13.596 7.196 9.5 3.1 10.598" />
+                      <path
+                        d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843"
+                      />
+                      <path d="m13.378 9.633 4.096 1.098 1.097-4.096" />
+                    </svg>
+                  </div>
+                  <div class="meta">
+                    <div class="title">Kompos bila memungkinkan</div>
+                    <div class="desc">
+                      Pisahkan bahan organik untuk kompos. Jangan campurkan
+                      plastik atau bahan berbahaya.
+                    </div>
+                    <div class="progress-bar"><span></span></div>
+                  </div>
+                </div>
+
+                <div class="step orange">
+                  <div class="icon" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M10 11v6" />
+                      <path d="M14 11v6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                      <path d="M3 6h18" />
+                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </div>
+                  <div class="meta">
+                    <div class="title">Buang ke residu jika tidak ada opsi</div>
+                    <div class="desc">
+                      Jika tidak ada fasilitas donasi atau kompos, bungkus rapat
+                      lalu buang ke tempat sampah residu sesuai peraturan
+                      setempat.
+                    </div>
+                    <div class="progress-bar"><span></span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <!-- info-col -->
+      </div>
+      <!-- hammers-wrap -->
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="copy">Hammers. All rights reserved. 2025</div>
+    </footer>
+
+    <script>
+      /* ========================
+        Data per-layer (sumber darimu)
+        Keys sesuai atribut data-id pada layer HTML
+        ======================== */
+      const LAYERS = {
+        "top-bun": {
+          name: "Top bun",
+          fat: 1.67,
+          carbs: 31.11,
+          prot: 6.67,
+          calories: 167,
+        },
+        tomatoes: {
+          name: "Tomatoes",
+          fat: 0.06,
+          carbs: 1.18,
+          prot: 0.26,
+          calories: 5,
+        },
+        lettuce: {
+          name: "Lettuce",
+          fat: 0.03,
+          carbs: 0.59,
+          prot: 0.18,
+          calories: 3,
+        },
+        beef: {
+          name: "Beef (patty)",
+          fat: 7.43,
+          carbs: 0.0,
+          prot: 10.14,
+          calories: 110,
+        },
+        "bottom-bun": {
+          name: "Bottom bun",
+          fat: 1.67,
+          carbs: 31.11,
+          prot: 6.67,
+          calories: 167,
+        },
+      };
+
+      function computeTotals(map) {
+        let f = 0,
+          c = 0,
+          p = 0,
+          k = 0;
+        for (const kname of Object.keys(map)) {
+          const v = map[kname];
+          f += Number(v.fat) || 0;
+          c += Number(v.carbs) || 0;
+          p += Number(v.prot) || 0;
+          k += Number(v.calories) || 0;
+        }
+        return {
+          fat: Math.round(f * 100) / 100,
+          carbs: Math.round(c * 100) / 100,
+          prot: Math.round(p * 100) / 100,
+          calories: Math.round(k),
+        };
+      }
+
+      const TOTALS = computeTotals(LAYERS);
+
+      // DOM refs
+      const nutriBody = document.getElementById("nutri-body");
+      const nutriFoot = document.getElementById("nutri-foot");
+      const totalCaloriesEl = document.getElementById("total-calories");
+      const detailsPanel = document.getElementById("detailsPanel");
+      const moreDetailsBtn = document.getElementById("moreDetailsBtn");
+      const perlayerBody = document.getElementById("perlayer-body");
+      const perlayerFoot = document.getElementById("perlayer-foot");
+      const activityGrid = document.getElementById("activityGrid");
+
+      // helpers
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, function (m) {
+          return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          }[m];
+        });
+      }
+
+      function renderTotals() {
+        nutriBody.innerHTML = `
+          <tr><td>Kalori</td><td style="text-align:right">${
+            TOTALS.calories
+          } kcal</td></tr>
+          <tr><td>Lemak</td><td style="text-align:right">${TOTALS.fat.toFixed(
+            2
+          )} g</td></tr>
+          <tr><td>Karbohidrat</td><td style="text-align:right">${TOTALS.carbs.toFixed(
+            2
+          )} g</td></tr>
+          <tr><td>Protein</td><td style="text-align:right">${TOTALS.prot.toFixed(
+            2
+          )} g</td></tr>
+        `;
+        nutriFoot.innerHTML = `<tr><td style="font-weight:700">Total</td><td style="text-align:right;font-weight:700">${TOTALS.calories} kcal</td></tr>`;
+        totalCaloriesEl.textContent = `${TOTALS.calories} kcal`;
+        document
+          .querySelectorAll(".burger-layer")
+          .forEach((el) => el.classList.remove("selected"));
+      }
+
+      function renderLayer(id) {
+        const layer = LAYERS[id];
+        if (!layer) return;
+        nutriBody.innerHTML = `
+          <tr><td style="font-weight:700">${escapeHtml(
+            layer.name
+          )}</td><td></td></tr>
+          <tr><td>Kalori</td><td style="text-align:right">${Math.round(
+            layer.calories
+          )} kcal</td></tr>
+          <tr><td>Lemak</td><td style="text-align:right">${Number(
+            layer.fat
+          ).toFixed(2)} g</td></tr>
+          <tr><td>Karbohidrat</td><td style="text-align:right">${Number(
+            layer.carbs
+          ).toFixed(2)} g</td></tr>
+          <tr><td>Protein</td><td style="text-align:right">${Number(
+            layer.prot
+          ).toFixed(2)} g</td></tr>
+        `;
+        nutriFoot.innerHTML = `<tr><td style="font-weight:700">Lapisan</td><td style="text-align:right;font-weight:700">${escapeHtml(
+          layer.name
+        )}</td></tr>`;
+      }
+
+      function renderPerLayerTable() {
+        perlayerBody.innerHTML = "";
+        for (const id of Object.keys(LAYERS)) {
+          const l = LAYERS[id];
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${escapeHtml(l.name)}</td>
+                          <td style="text-align:right">${Math.round(
+                            l.calories
+                          )}</td>
+                          <td style="text-align:right">${Number(l.fat).toFixed(
+                            2
+                          )}</td>
+                          <td style="text-align:right">${Number(
+                            l.carbs
+                          ).toFixed(2)}</td>
+                          <td style="text-align:right">${Number(l.prot).toFixed(
+                            2
+                          )}</td>`;
+          perlayerBody.appendChild(tr);
+        }
+        perlayerFoot.innerHTML = `<tr><td style="font-weight:700">Total</td><td style="text-align:right;font-weight:700">${
+          TOTALS.calories
+        }</td><td style="text-align:right;font-weight:700">${TOTALS.fat.toFixed(
+          2
+        )}</td><td style="text-align:right;font-weight:700">${TOTALS.carbs.toFixed(
+          2
+        )}</td><td style="text-align:right;font-weight:700">${TOTALS.prot.toFixed(
+          2
+        )}</td></tr>`;
+      }
+
+      // initial render
+      renderTotals();
+      renderPerLayerTable();
+
+      // layer click handlers
+      document.querySelectorAll(".burger-layer").forEach((el) => {
+        el.addEventListener("click", () => {
+          const id = el.getAttribute("data-id");
+          document
+            .querySelectorAll(".burger-layer")
+            .forEach((x) => x.classList.remove("selected"));
+          el.classList.add("selected");
+          renderLayer(id);
+        });
+        el.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            el.click();
+          }
+        });
+      });
+
+      // more details toggle
+      moreDetailsBtn.addEventListener("click", () => {
+        const open = detailsPanel.classList.toggle("open");
+        moreDetailsBtn.setAttribute("aria-expanded", open ? "true" : "false");
+        detailsPanel.setAttribute("aria-hidden", open ? "false" : "true");
+        if (open) renderPerLayerTable();
+      });
+
+      /* =========================
+        Activity cards (colored)
+        ========================= */
+      const AVG_WEIGHT_KG = 70;
+      const ACTIVITIES = [
+        {
+          id: "run",
+          title: "Lari",
+          met: 10,
+          speed_kmh: 10,
+          label: "Lari (10 km/jam)",
+          color: "green",
+        },
+        {
+          id: "cycle",
+          title: "Bersepeda",
+          met: 7,
+          speed_kmh: 20,
+          label: "Bersepeda (sedang ~20 km/jam)",
+          color: "blue",
+        },
+        {
+          id: "walk",
+          title: "Jalan",
+          met: 3.8,
+          speed_kmh: 5,
+          label: "Jalan (5 km/jam)",
+          color: "orange",
+        },
+      ];
+
+      function caloriesToMinutes(calories, met, weightKg) {
+        const kcalPerMin = (met * 3.5 * weightKg) / 200;
+        if (!isFinite(kcalPerMin) || kcalPerMin <= 0) return Infinity;
+        return Math.ceil(calories / kcalPerMin);
+      }
+      function minutesToDistanceKm(minutes, kmh) {
+        return kmh * (minutes / 60);
+      }
+
+      function svgIcon(type) {
+        if (type === "run")
+          return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 11-5-5-5 5"/><path d="m17 18-5-5-5 5"/></svg>`;
+        if (type === "cycle")
+          return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>`;
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></svg>`;
+      }
+
+      function populateActivities(totalCalories) {
+        activityGrid.innerHTML = "";
+        ACTIVITIES.forEach((act) => {
+          const mins = caloriesToMinutes(totalCalories, act.met, AVG_WEIGHT_KG);
+          const km = minutesToDistanceKm(mins, act.speed_kmh);
+          const card = document.createElement("div");
+          card.className =
+            "activity-card " +
+            (act.color === "green"
+              ? "green"
+              : act.color === "blue"
+              ? "blue"
+              : "orange");
+          card.innerHTML = `
+            <div class="activity-icon" aria-hidden="true">${svgIcon(
+              act.id
+            )}</div>
+            <div class="activity-title">${act.title}</div>
+            <div class="activity-desc">${mins.toLocaleString()} menit • ~${km.toFixed(
+            1
+          )} km</div>
+            <div style="margin-top:6px;font-size:13px;color:rgba(255,255,255,0.95);text-align:center">${
+              act.label
+            }: diperlukan ${mins} menit untuk membakar ${totalCalories} kcal.</div>
+          `;
+          activityGrid.appendChild(card);
+        });
+      }
+
+      // initial
+      populateActivities(TOTALS.calories);
+
+      // prevent drag
+      document
+        .querySelectorAll(".layer-img")
+        .forEach((img) =>
+          img.addEventListener("dragstart", (e) => e.preventDefault())
+        );
+
+      // expose update helper
+      window.hammers = {
+        LAYERS,
+        updateLayer: function (id, values) {
+          if (!this.LAYERS[id]) return;
+          Object.assign(this.LAYERS[id], values);
+          const newTotals = computeTotals(this.LAYERS);
+          renderTotals();
+          renderPerLayerTable();
+          populateActivities(newTotals.calories);
+        },
+        getTotals: function () {
+          return computeTotals(this.LAYERS);
+        },
+      };
+    </script>
+
+    <!-- optional site scripts -->
+    <script src="/assets/js/vendor/jquery.js"></script>
+    <script src="/assets/js/bootstrap-bundle.js"></script>
+    <script src="/assets/js/main.js"></script>
+  </body>
+</html>
